@@ -1,43 +1,14 @@
-"use client";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-import { TableEditorClient } from "@/components/features/TableEditorClient";
-import { TableSkeleton } from "@/components/features/TableSkeleton";
-import { supabase } from "@/lib/supabase";
-import type { Emoji } from "@/types/Emoji";
-import { useEffect, useState } from "react";
-
-function TableEditor() {
-	const [tableData, setTableData] = useState<Emoji[]>([]);
-	const [isLoading, setIsLoading] = useState(true);
-
-	useEffect(() => {
-		const fetchData = async () => {
-			const { data: tableData, error } = await supabase
-				.from("Emoji")
-				.select("*")
-				.order("emoji_id", { ascending: true });
-
-			if (error) {
-				console.error("Error fetching data:", error);
-			} else {
-				setTableData(tableData);
-			}
-
-			setIsLoading(false);
-		};
-
-		fetchData();
-	}, []);
-
+function Page() {
 	return (
-		<div className="p-4">
-			{isLoading ? (
-				<TableSkeleton />
-			) : (
-				<TableEditorClient initialData={tableData} />
-			)}
+		<div>
+			<Link href={"/login"}>
+				<Button>Login</Button>
+			</Link>
 		</div>
 	);
 }
 
-export default TableEditor;
+export default Page;
