@@ -32,7 +32,7 @@ export default function LoginForm() {
 					title: "ログイン成功",
 					description: "管理画面に移動します",
 				});
-				const from = searchParams.get("from") || "/admin/table";
+				const from = searchParams.get("from") || "/admin";
 				router.push(from);
 			} else {
 				toast({
