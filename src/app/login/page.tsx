@@ -12,34 +12,45 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { login } from "@/lib/auth";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginPage() {
 	const [password, setPassword] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const router = useRouter();
+	const searchParams = useSearchParams();
 	const { toast } = useToast();
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setIsLoading(true);
 
-		if (login(password)) {
-			toast({
-				title: "ログイン成功",
-				description: "管理画面に移動します",
-			});
-			router.push("/admin");
-		} else {
+		try {
+			const success = await login(password);
+			if (success) {
+				toast({
+					title: "ログイン成功",
+					description: "管理画面に移動します",
+				});
+				const from = searchParams.get("from") || "/admin/table";
+				router.push(from);
+			} else {
+				toast({
+					variant: "destructive",
+					title: "エラー",
+					description: "パスワードが正しくありません",
+				});
+			}
+		} catch (_error) {
 			toast({
 				variant: "destructive",
 				title: "エラー",
-				description: "パスワードが正しくありません",
+				description: "ログイン処理に失敗しました",
 			});
+		} finally {
+			setIsLoading(false);
 		}
-
-		setIsLoading(false);
 	};
 
 	return (

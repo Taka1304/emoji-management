@@ -54,7 +54,10 @@ export function TableEditorClient({ initialData }: TableEditorClientProps) {
 			if (!response.ok || error) {
 				toast({
 					title: "Error!",
-					description: "更新に失敗しました",
+					description: `
+						更新に失敗しました\n
+						${(await response.json()).message}
+					`,
 					variant: "destructive",
 				});
 			} else {

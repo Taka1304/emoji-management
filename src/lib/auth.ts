@@ -1,18 +1,25 @@
-export const checkAuth = () => {
-	if (typeof window === "undefined") return false;
-	return document.cookie.includes(
-		`auth_token=${process.env.NEXT_PUBLIC_AUTH_TOKEN}`,
-	);
-};
+export async function login(password: string): Promise<boolean> {
+	try {
+		const response = await fetch("/api/auth", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ password }),
+		});
 
-export const login = (password: string) => {
-	if (password === process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
-		document.cookie = `auth_token=${process.env.NEXT_PUBLIC_AUTH_TOKEN}; path=/; max-age=604800; SameSite=Lax`;
+		if (!response.ok) {
+			return false;
+		}
+
 		return true;
+	} catch {
+		return false;
 	}
-	return false;
-};
+}
 
-export const logout = () => {
-	document.cookie = "auth_token=; path=/; max-age=0";
-};
+export async function logout(): Promise<void> {
+	await fetch("/api/auth/logout", {
+		method: "POST",
+	});
+}
